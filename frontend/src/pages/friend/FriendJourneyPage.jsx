@@ -22,6 +22,7 @@ import { PoemStep } from '../../components/friend/PoemStep';
 import { FeedbackStep } from '../../components/friend/FeedbackStep';
 import { ReflectionStep } from '../../components/friend/ReflectionStep';
 import { EndingStep } from '../../components/friend/EndingStep';
+import { CuteMascots } from '../../components/friend/CuteMascots';
 import { Volume2, VolumeX, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const STEP_KEYS = [
@@ -196,21 +197,46 @@ export const FriendJourneyPage = () => {
     }
   };
 
+  const themeConfig = (() => {
+    const t = (pageData.themeName || 'mickey').toLowerCase();
+    switch (t) {
+      case 'mickey':
+      case 'mickey_mouse':
+        return { bgGradient: 'from-red-950 via-slate-950 to-amber-950', accentText: 'text-red-400', barGradient: 'from-red-500 to-amber-400', character: 'mickey' };
+      case 'dog':
+      case 'puppy':
+        return { bgGradient: 'from-amber-950 via-slate-950 to-orange-950', accentText: 'text-amber-400', barGradient: 'from-amber-500 to-orange-400', character: 'dog' };
+      case 'elephant':
+      case 'ocean':
+        return { bgGradient: 'from-blue-950 via-slate-950 to-cyan-950', accentText: 'text-blue-400', barGradient: 'from-blue-500 to-cyan-400', character: 'elephant' };
+      case 'cat':
+      case 'kitten':
+      case 'rose':
+      case 'violet':
+        return { bgGradient: 'from-pink-950 via-slate-950 to-purple-950', accentText: 'text-pink-400', barGradient: 'from-pink-500 to-purple-400', character: 'cat' };
+      case 'rabbit':
+      case 'bunny':
+      case 'emerald':
+        return { bgGradient: 'from-emerald-950 via-slate-950 to-teal-950', accentText: 'text-emerald-400', barGradient: 'from-emerald-500 to-teal-400', character: 'rabbit' };
+      default:
+        return { bgGradient: 'from-red-950 via-slate-950 to-amber-950', accentText: 'text-red-400', barGradient: 'from-red-500 to-amber-400', character: 'mickey' };
+    }
+  })();
+
   return (
     <div
-      className="min-h-screen text-slate-100 flex flex-col justify-between relative overflow-hidden transition-colors duration-500"
-      style={{ backgroundColor: customBg, color: customText }}
+      className={`min-h-screen text-slate-100 flex flex-col justify-between relative overflow-hidden bg-gradient-to-br ${themeConfig.bgGradient} transition-colors duration-500`}
     >
       {/* Background ambient lighting */}
       <div className="absolute -top-32 -left-32 w-80 h-80 bg-rose-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Header & Progress Bar */}
-      <header className="sticky top-0 z-40 px-6 py-4 backdrop-blur-md bg-slate-950/40 border-b border-white/5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 px-6 py-4 backdrop-blur-md bg-slate-950/60 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+          <CuteMascots type={themeConfig.character} />
           <span className="text-xs font-bold font-display uppercase tracking-widest text-white">
-            {pageData.friendName}'s Gift
+            {pageData.friendName}'s Journey
           </span>
         </div>
 
@@ -218,11 +244,11 @@ export const FriendJourneyPage = () => {
         <div className="flex items-center gap-2">
           <div className="w-24 sm:w-36 bg-slate-800/80 h-2 rounded-full overflow-hidden border border-white/10">
             <div
-              className="bg-gradient-to-r from-rose-500 to-rose-400 h-full transition-all duration-300"
+              className={`bg-gradient-to-r ${themeConfig.barGradient} h-full transition-all duration-300`}
               style={{ width: `${(currentStep / 11) * 100}%` }}
             />
           </div>
-          <span className="text-xs font-mono font-semibold text-rose-300">{currentStep}/11</span>
+          <span className={`text-xs font-mono font-semibold ${themeConfig.accentText}`}>{currentStep}/11</span>
         </div>
 
         {/* Ambient Audio Toggle */}
