@@ -35,9 +35,9 @@ connectDB().then(async () => {
   }
 });
 
-// Middleware
+// Middleware - Universal CORS for Vercel & Render
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: true,
   credentials: true
 }));
 
