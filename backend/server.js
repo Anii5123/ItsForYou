@@ -13,8 +13,27 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
 
+const Admin = require('./models/Admin');
+const bcrypt = require('bcryptjs');
+
 // Connect to MongoDB
-connectDB();
+connectDB().then(async () => {
+  try {
+    const adminCount = await Admin.countDocuments();
+    if (adminCount === 0) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('Admin@123456', salt);
+      await Admin.create({
+        email: 'admin@foryou.com',
+        password: hashedPassword,
+        name: 'System Admin'
+      });
+      console.log('[Auto-Seed] Initialized admin user: admin@foryou.com / Admin@123456');
+    }
+  } catch (err) {
+    console.error('[Auto-Seed Warning]', err.message);
+  }
+});
 
 // Middleware
 app.use(cors({
