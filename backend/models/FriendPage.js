@@ -55,6 +55,10 @@ const friendPageSchema = new mongoose.Schema({
   friendshipDayMessage: { type: String, default: 'Happy Friendship Day! Thank you for being such an incredible part of my life.' },
   timelineEvents: { type: [timelineEventSchema], default: [] },
   galleryImages: { type: [galleryImageSchema], default: [] },
+  galleryFallbackMessage: {
+    type: String,
+    default: "Some of our best memories weren't captured on camera — they were lived fully in the moment, etched deep in my heart."
+  },
   voiceNoteUrl: { type: String, default: '' },
   poemStanzas: { type: [String], default: [] },
   surpriseGiftContent: {

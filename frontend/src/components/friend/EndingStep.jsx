@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sparkles, Star, Award, Gift } from 'lucide-react';
+import { CuteMascots } from './CuteMascots';
 
 export const EndingStep = ({ pageData }) => {
   return (
@@ -45,6 +46,10 @@ export const EndingStep = ({ pageData }) => {
       </div>
 
       <div className="max-w-2xl w-full p-8 md:p-14 rounded-3xl glass-panel border border-rose-500/30 space-y-8 shadow-2xl relative z-10 group hover:border-rose-500/50 transition-colors">
+        <div className="flex justify-center">
+          <CuteMascots type="teddy" />
+        </div>
+
         <motion.div
           animate={{ scale: [1, 1.12, 1], rotate: [0, 5, -5, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}

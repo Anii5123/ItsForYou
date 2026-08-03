@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sparkles, ArrowRight, Volume2, Star } from 'lucide-react';
+import { CuteMascots } from './CuteMascots';
 
 export const WelcomeStep = ({ pageData, onNext, onPlayAudio }) => {
   return (
@@ -38,24 +39,28 @@ export const WelcomeStep = ({ pageData, onNext, onPlayAudio }) => {
         ))}
       </div>
 
-      {/* Main Animated Gift Icon */}
-      <motion.div
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative group cursor-pointer"
-        onClick={() => {
-          if (onPlayAudio) onPlayAudio();
-          onNext();
-        }}
-      >
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-rose-600 via-purple-600 to-rose-400 blur-xl opacity-70 group-hover:opacity-100 transition-opacity animate-pulse-slow" />
-        <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-tr from-rose-600 via-rose-500 to-rose-400 flex items-center justify-center shadow-2xl shadow-rose-600/50 border border-white/20 transform group-hover:scale-105 transition-transform duration-300">
-          <Heart className="w-14 h-14 text-white fill-white animate-pulse" />
-        </div>
-        <div className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-amber-400/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-lg">
-          <Star className="w-4 h-4 text-amber-300 fill-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
-        </div>
-      </motion.div>
+      {/* Main Animated Gift Icon & Mascot */}
+      <div className="flex flex-col items-center gap-2">
+        <CuteMascots type="puppy" />
+
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          className="relative group cursor-pointer"
+          onClick={() => {
+            if (onPlayAudio) onPlayAudio();
+            onNext();
+          }}
+        >
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-rose-600 via-purple-600 to-rose-400 blur-xl opacity-70 group-hover:opacity-100 transition-opacity animate-pulse-slow" />
+          <div className="relative w-28 h-28 rounded-3xl bg-gradient-to-tr from-rose-600 via-rose-500 to-rose-400 flex items-center justify-center shadow-2xl shadow-rose-600/50 border border-white/20 transform group-hover:scale-105 transition-transform duration-300">
+            <Heart className="w-14 h-14 text-white fill-white animate-pulse" />
+          </div>
+          <div className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-amber-400/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-lg">
+            <Star className="w-4 h-4 text-amber-300 fill-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
+          </div>
+        </motion.div>
+      </div>
 
       {/* Hero Typography */}
       <div className="space-y-4 max-w-2xl relative z-10">

@@ -254,7 +254,9 @@ export const PageEditorPage = () => {
           {activeTab === 'gallery' && (
             <GalleryEditor
               images={pageData.galleryImages || []}
-              onChange={(galleryImages) => setPageData({ ...pageData, galleryImages })}
+              fallbackMessage={pageData.galleryFallbackMessage || ''}
+              onChangeImages={(galleryImages) => setPageData({ ...pageData, galleryImages })}
+              onChangeFallback={(galleryFallbackMessage) => setPageData({ ...pageData, galleryFallbackMessage })}
             />
           )}
 
