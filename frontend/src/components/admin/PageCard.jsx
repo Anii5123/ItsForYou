@@ -20,7 +20,8 @@ export const PageCard = ({ page, onDuplicate, onDelete, onPreview }) => {
   const [copied, setCopied] = useState(false);
 
   const publicPath = `/${page.randomId}/${page.friendSlug}`;
-  const fullUrl = `${window.location.origin}${publicPath}`;
+  const baseUrl = import.meta.env.VITE_PUBLIC_URL || window.location.origin;
+  const fullUrl = `${baseUrl}${publicPath}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fullUrl);
