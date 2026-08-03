@@ -10,7 +10,8 @@ const feedbackResponseSchema = new mongoose.Schema({
     whatAmIToYou: { type: String, default: '' },
     describeOurFriendship: { type: String, default: '' },
     favouriteMemory: { type: String, default: '' },
-    anythingElse: { type: String, default: '' }
+    anythingElse: { type: String, default: '' },
+    friendVoiceNoteUrl: { type: String, default: '' }
   },
   submittedAt: { type: Date, default: Date.now }
 }, { timestamps: true });

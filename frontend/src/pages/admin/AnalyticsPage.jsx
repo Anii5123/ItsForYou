@@ -253,6 +253,17 @@ export const AnalyticsPage = () => {
                             <p className="text-xs text-slate-200 italic font-serif">"{fb.reflectionAnswers.anythingElse}"</p>
                           </div>
                         )}
+                        {fb.reflectionAnswers.friendVoiceNoteUrl && (
+                          <div className="p-3 rounded-xl bg-slate-950/60 border border-rose-500/30 col-span-1 sm:col-span-2 flex items-center justify-between">
+                            <div>
+                              <p className="text-[10px] text-rose-400 uppercase font-bold flex items-center gap-1">
+                                <Mic className="w-3.5 h-3.5" /> Friend's Voice Note Reply
+                              </p>
+                              <p className="text-[11px] text-slate-400">Audio message sent by {page.friendName}</p>
+                            </div>
+                            <audio controls src={fb.reflectionAnswers.friendVoiceNoteUrl} className="h-8 max-w-[200px]" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

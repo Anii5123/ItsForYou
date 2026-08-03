@@ -17,7 +17,8 @@ export const useFriendStore = create((set, get) => ({
     whatAmIToYou: '',
     describeOurFriendship: '',
     favouriteMemory: '',
-    anythingElse: ''
+    anythingElse: '',
+    friendVoiceNoteUrl: ''
   },
 
   initPage: (pageData, randomId, friendSlug) => {
