@@ -2,44 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useFriendStore } from '../../store/friendStore';
 import { Textarea } from '../ui/Input';
-import { Sparkles, ArrowRight, Mic, Upload, CheckCircle2, AlertCircle, Play, Pause, Trash2 } from 'lucide-react';
-import { uploadMediaFile } from '../../api/uploadApi';
+import { VoiceRecorder } from '../ui/VoiceRecorder';
+import { Sparkles, ArrowRight, Mic, AlertCircle } from 'lucide-react';
 
 export const ReflectionStep = ({ onNext }) => {
   const { reflections, updateReflection } = useFriendStore();
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [previewAudio] = useState(() => new Audio());
-
-  const handleVoiceUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    setError('');
-    try {
-      const url = await uploadMediaFile(file, 'friend_voice_notes');
-      updateReflection('friendVoiceNoteUrl', url);
-    } catch (err) {
-      setError('Failed to upload voice note. Please try another audio file.');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const togglePreview = () => {
-    if (!reflections.friendVoiceNoteUrl) return;
-    if (isPlaying) {
-      previewAudio.pause();
-      setIsPlaying(false);
-    } else {
-      previewAudio.src = reflections.friendVoiceNoteUrl;
-      previewAudio.play();
-      setIsPlaying(true);
-      previewAudio.onended = () => setIsPlaying(false);
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,7 +27,7 @@ export const ReflectionStep = ({ onNext }) => {
       return;
     }
     if (!reflections.friendVoiceNoteUrl) {
-      setError('Please upload or record a Voice Note message for me 🎙️');
+      setError('Please record or upload a Voice Note message for me 🎙️');
       return;
     }
     if (!reflections.anythingElse?.trim()) {
@@ -122,53 +90,19 @@ export const ReflectionStep = ({ onNext }) => {
             placeholder="That time when we..."
           />
 
-          {/* Mandatory Friend Voice Note Field */}
-          <div className="space-y-2 p-4 rounded-2xl bg-slate-900/90 border border-rose-500/30">
+          {/* Mandatory Microphone Voice Recorder for Friend */}
+          <div className="space-y-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
               <Mic className="w-4 h-4 text-rose-400" /> Voice Note Message For Me *
             </label>
-            <p className="text-xs text-slate-400">Upload an audio recording or voice note file from your device for me to listen to.</p>
-
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-              <label className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md shadow-rose-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <Upload className="w-4 h-4" />
-                {isUploading ? 'Uploading Voice Note...' : 'Select Audio File'}
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleVoiceUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                />
-              </label>
-
-              {reflections.friendVoiceNoteUrl && (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={togglePreview}
-                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-semibold border border-slate-700 flex items-center gap-1.5"
-                  >
-                    {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                    {isPlaying ? 'Pause' : 'Play My Voice Note'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => updateReflection('friendVoiceNoteUrl', '')}
-                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-red-400"
-                    title="Remove Voice Note"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {reflections.friendVoiceNoteUrl && (
-              <p className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Voice note attached successfully!
-              </p>
-            )}
+            <p className="text-xs text-slate-400">Record a voice note directly using your microphone or select an audio file. Listen back to confirm before submitting!</p>
+            
+            <VoiceRecorder
+              onAudioUploaded={(url) => updateReflection('friendVoiceNoteUrl', url)}
+              existingUrl={reflections.friendVoiceNoteUrl}
+              folder="friend_voice_notes"
+              label="Friend Voice Note Reply"
+            />
           </div>
 
           <Textarea
