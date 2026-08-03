@@ -41,7 +41,7 @@ export const WelcomeStep = ({ pageData, onNext, onPlayAudio }) => {
 
       {/* Main Animated Gift Icon & Mascot */}
       <div className="flex flex-col items-center gap-2">
-        <CuteMascots type="puppy" />
+        <CuteMascots type={pageData.themeName || 'mickey'} />
 
         <motion.div
           animate={{ y: [0, -10, 0] }}

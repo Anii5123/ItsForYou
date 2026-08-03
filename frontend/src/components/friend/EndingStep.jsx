@@ -47,7 +47,7 @@ export const EndingStep = ({ pageData }) => {
 
       <div className="max-w-2xl w-full p-8 md:p-14 rounded-3xl glass-panel border border-rose-500/30 space-y-8 shadow-2xl relative z-10 group hover:border-rose-500/50 transition-colors">
         <div className="flex justify-center">
-          <CuteMascots type="teddy" />
+          <CuteMascots type={pageData.themeName || 'mickey'} />
         </div>
 
         <motion.div

@@ -20,7 +20,7 @@ export const GalleryStep = ({ pageData, onNext }) => {
         className="flex flex-col items-center justify-center min-h-[75vh] text-center space-y-6 px-4"
       >
         <div className="max-w-xl w-full p-8 md:p-12 rounded-3xl glass-panel border border-rose-500/30 space-y-6 shadow-2xl relative overflow-hidden">
-          <CuteMascots type="puppy" />
+          <CuteMascots type={pageData.themeName || 'mickey'} />
 
           <div className="space-y-2">
             <span className="text-xs uppercase font-bold tracking-widest text-rose-300 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 inline-block">
@@ -68,7 +68,7 @@ export const GalleryStep = ({ pageData, onNext }) => {
       {/* Header & View Mode Switcher */}
       <div className="text-center space-y-2">
         <div className="flex items-center justify-center gap-3">
-          <CuteMascots type="kitten" />
+          <CuteMascots type={pageData.themeName || 'mickey'} />
           <div>
             <span className="text-xs uppercase font-bold tracking-widest text-rose-300 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 inline-block">
               Photo Storybook ({currentIndex + 1}/{images.length})
