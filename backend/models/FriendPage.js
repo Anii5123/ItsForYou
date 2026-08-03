@@ -46,6 +46,7 @@ const friendPageSchema = new mongoose.Schema({
     enum: ['draft', 'published', 'archived'],
     default: 'draft'
   },
+  themeName: { type: String, default: 'mickey' },
   theme: {
     key: { type: String, default: 'rose_gold' },
     customColors: { type: customColorsSchema, default: () => ({}) }

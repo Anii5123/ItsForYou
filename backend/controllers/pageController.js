@@ -103,8 +103,8 @@ const updatePage = async (req, res) => {
     }
 
     const fieldsToUpdate = [
-      'friendSlug', 'friendName', 'status', 'theme', 'backgroundMusicUrl',
-      'heroMessage', 'friendshipDayMessage', 'timelineEvents', 'galleryImages',
+      'friendSlug', 'friendName', 'status', 'theme', 'themeName', 'backgroundMusicUrl',
+      'heroMessage', 'friendshipDayMessage', 'timelineEvents', 'galleryImages', 'galleryFallbackMessage',
       'voiceNoteUrl', 'poemStanzas', 'surpriseGiftContent', 'endingMessage', 'currentStep'
     ];
 

@@ -230,8 +230,8 @@ export const PageEditorPage = () => {
           {activeTab === 'theme' && (
             <div className="space-y-6 max-w-4xl">
               <ThemePicker
-                theme={pageData.theme}
-                onChange={(theme) => setPageData({ ...pageData, theme })}
+                selectedTheme={pageData.themeName || 'mickey'}
+                onChange={(themeName) => setPageData({ ...pageData, themeName })}
               />
 
               <Input
