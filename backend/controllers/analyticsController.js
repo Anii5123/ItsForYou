@@ -242,14 +242,27 @@ const logPoemEvent = async (req, res) => {
 const submitFeedback = async (req, res) => {
   try {
     const { randomId } = req.params;
-    const { sessionId, likedGift, likedMostText, didntLikeText, reflectionAnswers } = req.body;
+    const { sessionId, visitorName, visitorEmail, likedGift, likedMostText, didntLikeText, reflectionAnswers } = req.body;
 
     const page = await FriendPage.findOne({ randomId });
     if (!page) return res.status(404).json({ message: 'Page not found' });
 
+    // Look up visitor details from VisitSession if not directly in body
+    let finalName = visitorName || '';
+    let finalEmail = visitorEmail || '';
+    if (!finalName || !finalEmail) {
+      const session = await VisitSession.findOne({ friendPageId: page._id, sessionId });
+      if (session) {
+        if (!finalName) finalName = session.visitorName || '';
+        if (!finalEmail) finalEmail = session.visitorEmail || '';
+      }
+    }
+
     const feedback = await FeedbackResponse.create({
       friendPageId: page._id,
       sessionId,
+      visitorName: finalName,
+      visitorEmail: finalEmail,
       likedGift: likedGift !== undefined ? likedGift : true,
       likedMostText: likedMostText || '',
       didntLikeText: didntLikeText || '',
@@ -257,15 +270,20 @@ const submitFeedback = async (req, res) => {
     });
 
     // Mark VisitSession as completed
-    await VisitSession.updateOne({ friendPageId: page._id, sessionId }, { completed: true });
+    await VisitSession.updateOne({ friendPageId: page._id, sessionId }, {
+      completed: true,
+      visitorName: finalName,
+      visitorEmail: finalEmail
+    });
 
     // Send email alert to Admin via SMTP
     sendEmail({
       to: process.env.SMTP_USER || 'aniip5122003@gmail.com',
-      subject: `❤️ ${page.friendName} Completed Their Friendship Experience!`,
+      subject: `❤️ ${finalName || page.friendName} Completed Their Friendship Experience!`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #0f172a; color: #f8fafc; border-radius: 12px;">
-          <h2 style="color: #fb7185;">Great News! ${page.friendName} Just Finished Their Journey</h2>
+          <h2 style="color: #fb7185;">Great News! ${finalName || page.friendName} (${finalEmail || 'No email'}) Just Finished Their Journey</h2>
+          <p><strong>Visitor:</strong> ${finalName || 'Guest'} (${finalEmail || 'No email'})</p>
           <p><strong>Liked Experience:</strong> ${likedGift ? 'Yes, Loved It! ❤️' : 'Could be better'}</p>
           <p><strong>Favourite Moment:</strong> ${likedMostText || 'N/A'}</p>
           <hr style="border-color: #334155;" />
@@ -275,6 +293,7 @@ const submitFeedback = async (req, res) => {
             <li><strong>Describe our friendship:</strong> ${reflectionAnswers?.describeOurFriendship || 'N/A'}</li>
             <li><strong>Favourite memory:</strong> ${reflectionAnswers?.favouriteMemory || 'N/A'}</li>
             <li><strong>Anything else:</strong> ${reflectionAnswers?.anythingElse || 'N/A'}</li>
+            ${reflectionAnswers?.friendVoiceNoteUrl ? `<li><strong>Voice Note Reply:</strong> <a href="${reflectionAnswers.friendVoiceNoteUrl}" style="color: #fb7185;">Listen to Voice Note</a></li>` : ''}
           </ul>
           <p style="color: #94a3b8; font-size: 12px;">Sent via For You App SMTP Service</p>
         </div>

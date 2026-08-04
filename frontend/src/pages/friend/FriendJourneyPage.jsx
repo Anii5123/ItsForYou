@@ -123,8 +123,11 @@ export const FriendJourneyPage = () => {
 
     // If reached ending step (11), submit stored feedback/reflections automatically
     if (currentStep === 11) {
+      const { visitorName, visitorEmail } = useFriendStore.getState();
       submitFeedbackServer(randomId, {
         sessionId,
+        visitorName,
+        visitorEmail,
         likedGift: feedback.likedGift,
         likedMostText: feedback.likedMostText,
         didntLikeText: feedback.didntLikeText,

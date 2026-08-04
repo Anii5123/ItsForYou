@@ -286,10 +286,20 @@ export const AnalyticsPage = () => {
             <div className="space-y-4">
               {feedbackList.map((fb, idx) => (
                 <Card key={idx} className="p-6 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <span className="text-xs font-bold text-rose-400 uppercase">
-                      Response #{feedbackList.length - idx}
-                    </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-rose-400 uppercase">
+                          Response #{feedbackList.length - idx}
+                        </span>
+                        <span className="text-sm font-bold text-white">
+                          From: {fb.visitorName || page.friendName}
+                        </span>
+                      </div>
+                      {fb.visitorEmail && (
+                        <p className="text-xs text-rose-300 font-mono">✉️ {fb.visitorEmail}</p>
+                      )}
+                    </div>
                     <span className="text-xs text-slate-500 font-mono">
                       {new Date(fb.createdAt).toLocaleString()}
                     </span>
