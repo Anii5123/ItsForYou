@@ -179,15 +179,93 @@ export const AnalyticsPage = () => {
           </Card>
 
           <Card className="p-5 flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
               <BookOpen className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-semibold uppercase">Poem Reads</p>
-              <h4 className="text-xl font-bold text-white">{poemStats.totalPoemReads} Sessions</h4>
+              <p className="text-xs text-slate-400 font-semibold uppercase">Poem Stanza Reads</p>
+              <h4 className="text-xl font-bold text-white">{poemStats.totalPoemReads} Reads</h4>
             </div>
           </Card>
         </div>
+
+        {/* Detailed Per-Visitor Device & Duration Sessions List */}
+        <Card className="p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Users className="w-5 h-5 text-rose-400" /> Visitor Sessions & Duration Breakdown
+              </h3>
+              <p className="text-xs text-slate-400">Track individual visitor devices, time spent per session, and current step reached.</p>
+            </div>
+            <span className="text-xs px-3 py-1 rounded-full bg-slate-800 text-rose-300 font-mono">
+              {analytics.visitorSessions?.length || 0} Total Sessions
+            </span>
+          </div>
+
+          {(!analytics.visitorSessions || analytics.visitorSessions.length === 0) ? (
+            <p className="text-xs text-slate-500 py-4 text-center">No visitor sessions recorded yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="p-3">Device / Visitor</th>
+                    <th className="p-3">Started At</th>
+                    <th className="p-3">Duration Spent</th>
+                    <th className="p-3">Step Progress</th>
+                    <th className="p-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {analytics.visitorSessions.map((session, idx) => {
+                    const mins = Math.floor((session.totalTimeSeconds || 0) / 60);
+                    const secs = (session.totalTimeSeconds || 0) % 60;
+                    const durationStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
+                    return (
+                      <tr key={idx} className="hover:bg-slate-900/50 transition-colors">
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">
+                              {session.deviceType === 'mobile' ? '📱' : session.deviceType === 'tablet' ? '📲' : '💻'}
+                            </span>
+                            <div>
+                              <p className="font-semibold text-white uppercase">{session.deviceType}</p>
+                              <p className="text-[10px] text-slate-500 font-mono">{session.sessionId}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3 text-slate-400 font-mono">
+                          {new Date(session.startedAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        </td>
+                        <td className="p-3 font-semibold text-rose-300 font-mono">
+                          {durationStr}
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 font-bold text-[11px]">
+                            Step {session.currentStep}/11
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          {session.completed ? (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">
+                              Completed 🎉
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px]">
+                              In Progress
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
 
         {/* Received Reflections & Feedback Cards */}
         <div className="space-y-4">

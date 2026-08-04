@@ -21,6 +21,7 @@ const visitSessionSchema = new mongoose.Schema({
     deviceType: { type: String, enum: ['mobile', 'tablet', 'desktop', 'unknown'], default: 'unknown' }
   },
   totalTimeSeconds: { type: Number, default: 0 },
+  currentStep: { type: Number, default: 1 },
   completed: { type: Boolean, default: false }
 }, { timestamps: true });
 

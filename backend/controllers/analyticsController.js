@@ -108,21 +108,29 @@ const logPageVisit = async (req, res) => {
   }
 };
 
-// @desc    Sync server-authoritative current step
+// @desc    Sync server-authoritative current step per visitor session
 // @route   POST /api/f/:randomId/step
 // @access  Public
 const syncStep = async (req, res) => {
   try {
     const { randomId } = req.params;
-    const { currentStep } = req.body;
+    const { sessionId, currentStep } = req.body;
 
     const page = await FriendPage.findOne({ randomId });
-    if (page && currentStep) {
-      page.currentStep = Math.max(page.currentStep, currentStep);
-      await page.save();
+    if (!page) return res.status(404).json({ message: 'Page not found' });
+
+    let updatedStep = 1;
+    if (sessionId && currentStep) {
+      const session = await VisitSession.findOne({ friendPageId: page._id, sessionId });
+      if (session) {
+        session.currentStep = Math.max(session.currentStep || 1, currentStep);
+        session.lastActivityAt = new Date();
+        await session.save();
+        updatedStep = session.currentStep;
+      }
     }
 
-    res.json({ currentStep: page?.currentStep });
+    res.json({ currentStep: updatedStep });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -201,22 +209,21 @@ const logVoiceEvent = async (req, res) => {
   }
 };
 
-// @desc    Log poem stanza event
+// @desc    Log poem reading event
 // @route   POST /api/f/:randomId/poem-event
 // @access  Public
 const logPoemEvent = async (req, res) => {
   try {
     const { randomId } = req.params;
-    const { sessionId, stanzasCompleted, totalDurationSeconds, completionPercent } = req.body;
+    const { sessionId, readDurationSeconds, completed } = req.body;
 
     const page = await FriendPage.findOne({ randomId });
     if (page) {
       await PoemEvent.create({
         friendPageId: page._id,
         sessionId,
-        stanzasCompleted: stanzasCompleted || 0,
-        totalDurationSeconds: totalDurationSeconds || 0,
-        completionPercent: completionPercent || 0
+        readDurationSeconds: readDurationSeconds || 0,
+        completed: !!completed
       });
     }
     res.json({ status: 'logged' });
@@ -286,7 +293,7 @@ const getPageAnalytics = async (req, res) => {
     const page = await FriendPage.findById(id);
     if (!page) return res.status(404).json({ message: 'Page not found' });
 
-    const sessions = await VisitSession.find({ friendPageId: id });
+    const sessions = await VisitSession.find({ friendPageId: id }).sort({ startedAt: -1 });
     const totalVisits = sessions.length;
     const completedVisits = sessions.filter(s => s.completed).length;
     const completionRate = totalVisits > 0 ? Math.round((completedVisits / totalVisits) * 100) : 0;
@@ -296,6 +303,29 @@ const getPageAnalytics = async (req, res) => {
 
     const bounceVisits = sessions.filter(s => (s.totalTimeSeconds || 0) < 10).length;
     const bounceRate = totalVisits > 0 ? Math.round((bounceVisits / totalVisits) * 100) : 0;
+
+    // Detailed per-visitor sessions list with duration & device breakdown
+    const visitorSessions = await Promise.all(
+      sessions.map(async (s) => {
+        const visits = await PageVisit.find({ friendPageId: id, sessionId: s.sessionId }).sort({ createdAt: 1 });
+        return {
+          sessionId: s.sessionId,
+          deviceType: s.deviceInfo?.deviceType || 'unknown',
+          userAgent: s.deviceInfo?.userAgent || '',
+          startedAt: s.startedAt,
+          lastActivityAt: s.lastActivityAt,
+          totalTimeSeconds: s.totalTimeSeconds || 0,
+          currentStep: s.currentStep || 1,
+          completed: s.completed,
+          isFirstVisit: s.isFirstVisit,
+          pageVisitsCount: visits.length,
+          stepBreakdown: visits.map(v => ({
+            pageKey: v.pageKey,
+            durationSeconds: v.durationSeconds
+          }))
+        };
+      })
+    );
 
     // Per-page dwell breakdown
     const pageVisits = await PageVisit.find({ friendPageId: id });
@@ -332,6 +362,7 @@ const getPageAnalytics = async (req, res) => {
         avgSessionSeconds,
         bounceRate
       },
+      visitorSessions,
       pageBreakdown,
       voiceStats: {
         totalVoiceListens,

@@ -27,15 +27,16 @@ export const useFriendStore = create((set, get) => ({
     const stepKey = `foryou_step_${randomId}`;
     
     let savedSessionId = localStorage.getItem(storageKey);
+    let isNewDevice = false;
     if (!savedSessionId) {
       savedSessionId = 'sess_' + Math.random().toString(36).substring(2, 11);
-      localStorage.getItem(storageKey, savedSessionId);
+      localStorage.setItem(storageKey, savedSessionId);
+      isNewDevice = true;
     }
 
-    // Determine starting step: check server currentStep vs local step
+    // Determine starting step per device: new device starts at Step 1 always
     const localStep = parseInt(localStorage.getItem(stepKey) || '1', 10);
-    const serverStep = pageData.currentStep || 1;
-    const startingStep = Math.max(localStep, serverStep);
+    const startingStep = isNewDevice ? 1 : Math.min(Math.max(localStep, 1), 11);
 
     const isResumed = startingStep > 1;
 
