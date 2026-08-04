@@ -296,22 +296,14 @@ export const FriendJourneyPage = () => {
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className="px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 disabled:opacity-30 text-slate-300 border border-white/5 flex items-center gap-1 transition-colors"
+          className="px-3.5 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 disabled:opacity-30 text-slate-300 border border-white/10 flex items-center gap-1 transition-colors text-xs font-semibold"
         >
-          <ChevronLeft className="w-4 h-4" /> Prev
+          <ChevronLeft className="w-4 h-4" /> Previous Step
         </button>
 
-        <span className="font-mono text-[10px] text-slate-400 uppercase tracking-widest hidden sm:inline">
-          For You • Personalized Gift Experience
+        <span className="font-mono text-[10px] text-slate-400 uppercase tracking-widest">
+          For You • Personalized Experience
         </span>
-
-        <button
-          onClick={nextStep}
-          disabled={currentStep === 11}
-          className="px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 disabled:opacity-30 text-slate-300 border border-white/5 flex items-center gap-1 transition-colors"
-        >
-          Next <ChevronRight className="w-4 h-4" />
-        </button>
       </footer>
     </div>
   );
