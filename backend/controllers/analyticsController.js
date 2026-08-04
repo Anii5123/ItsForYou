@@ -23,7 +23,7 @@ const parseDeviceType = (userAgent = '') => {
 const startSession = async (req, res) => {
   try {
     const { randomId } = req.params;
-    const { sessionId, userAgent } = req.body;
+    const { sessionId, userAgent, visitorName, visitorEmail } = req.body;
 
     const page = await FriendPage.findOne({ randomId });
     if (!page) {
@@ -39,6 +39,8 @@ const startSession = async (req, res) => {
         isFirstVisit: true,
         startedAt: new Date(),
         lastActivityAt: new Date(),
+        visitorName: visitorName || '',
+        visitorEmail: visitorEmail || '',
         deviceInfo: {
           userAgent: userAgent || '',
           deviceType: parseDeviceType(userAgent)
@@ -47,10 +49,12 @@ const startSession = async (req, res) => {
     } else {
       session.isFirstVisit = false;
       session.lastActivityAt = new Date();
+      if (visitorName) session.visitorName = visitorName;
+      if (visitorEmail) session.visitorEmail = visitorEmail;
       await session.save();
     }
 
-    res.json({ sessionId: session.sessionId, friendPageId: page._id });
+    res.json({ sessionId: session.sessionId, friendPageId: page._id, visitorName: session.visitorName, visitorEmail: session.visitorEmail });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -310,6 +314,8 @@ const getPageAnalytics = async (req, res) => {
         const visits = await PageVisit.find({ friendPageId: id, sessionId: s.sessionId }).sort({ createdAt: 1 });
         return {
           sessionId: s.sessionId,
+          visitorName: s.visitorName || '',
+          visitorEmail: s.visitorEmail || '',
           deviceType: s.deviceInfo?.deviceType || 'unknown',
           userAgent: s.deviceInfo?.userAgent || '',
           startedAt: s.startedAt,

@@ -20,6 +20,8 @@ const visitSessionSchema = new mongoose.Schema({
     userAgent: { type: String, default: '' },
     deviceType: { type: String, enum: ['mobile', 'tablet', 'desktop', 'unknown'], default: 'unknown' }
   },
+  visitorName: { type: String, default: '' },
+  visitorEmail: { type: String, default: '' },
   totalTimeSeconds: { type: Number, default: 0 },
   currentStep: { type: Number, default: 1 },
   completed: { type: Boolean, default: false }

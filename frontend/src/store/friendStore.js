@@ -4,6 +4,8 @@ export const useFriendStore = create((set, get) => ({
   pageData: null,
   currentStep: 1,
   sessionId: null,
+  visitorName: '',
+  visitorEmail: '',
   isResumed: false,
   showWelcomeBack: false,
   
@@ -34,6 +36,9 @@ export const useFriendStore = create((set, get) => ({
       isNewDevice = true;
     }
 
+    const savedName = localStorage.getItem(`foryou_visitor_name_${randomId}`) || '';
+    const savedEmail = localStorage.getItem(`foryou_visitor_email_${randomId}`) || '';
+
     // Determine starting step per device: new device starts at Step 1 always
     const localStep = parseInt(localStorage.getItem(stepKey) || '1', 10);
     const startingStep = isNewDevice ? 1 : Math.min(Math.max(localStep, 1), 11);
@@ -44,13 +49,24 @@ export const useFriendStore = create((set, get) => ({
       pageData,
       currentStep: startingStep,
       sessionId: savedSessionId,
+      visitorName: savedName,
+      visitorEmail: savedEmail,
       isResumed,
       showWelcomeBack: isResumed
     });
   },
 
+  setVisitorDetails: (name, email) => {
+    const { pageData } = get();
+    if (pageData?.randomId) {
+      localStorage.setItem(`foryou_visitor_name_${pageData.randomId}`, name);
+      localStorage.setItem(`foryou_visitor_email_${pageData.randomId}`, email);
+    }
+    set({ visitorName: name, visitorEmail: email });
+  },
+
   setStep: (step) => {
-    const { pageData, randomId } = get();
+    const { pageData } = get();
     const targetStep = Math.min(Math.max(step, 1), 11);
     
     if (pageData?.randomId) {

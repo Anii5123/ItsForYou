@@ -231,8 +231,13 @@ export const AnalyticsPage = () => {
                               {session.deviceType === 'mobile' ? '📱' : session.deviceType === 'tablet' ? '📲' : '💻'}
                             </span>
                             <div>
-                              <p className="font-semibold text-white uppercase">{session.deviceType}</p>
-                              <p className="text-[10px] text-slate-500 font-mono">{session.sessionId}</p>
+                              <p className="font-bold text-white">
+                                {session.visitorName || 'Guest Visitor'}
+                              </p>
+                              <p className="text-[11px] text-rose-300 font-mono">
+                                {session.visitorEmail || 'No email provided'}
+                              </p>
+                              <p className="text-[9px] text-slate-500 uppercase">{session.deviceType} • {session.sessionId}</p>
                             </div>
                           </div>
                         </td>
