@@ -24,35 +24,43 @@ export const useFriendStore = create((set, get) => ({
   },
 
   initPage: (pageData, randomId, friendSlug) => {
-    // Generate or retrieve persistent sessionId for this friend experience
     const storageKey = `foryou_session_${randomId}`;
+    const timeKey = `foryou_session_timestamp_${randomId}`;
     const stepKey = `foryou_step_${randomId}`;
     
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const now = Date.now();
+    const lastSessionTime = parseInt(localStorage.getItem(timeKey) || '0', 10);
+    const isExpired = (now - lastSessionTime) > ONE_HOUR_MS;
+
     let savedSessionId = localStorage.getItem(storageKey);
-    let isNewDevice = false;
-    if (!savedSessionId) {
+    let savedName = localStorage.getItem(`foryou_visitor_name_${randomId}`) || '';
+    let savedEmail = localStorage.getItem(`foryou_visitor_email_${randomId}`) || '';
+
+    // If session doesn't exist or is > 1 hour old, create fresh session and clear cached credentials
+    if (!savedSessionId || isExpired) {
       savedSessionId = 'sess_' + Math.random().toString(36).substring(2, 11);
       localStorage.setItem(storageKey, savedSessionId);
-      isNewDevice = true;
+      localStorage.setItem(timeKey, now.toString());
+      if (isExpired) {
+        localStorage.removeItem(`foryou_visitor_name_${randomId}`);
+        localStorage.removeItem(`foryou_visitor_email_${randomId}`);
+        savedName = '';
+        savedEmail = '';
+      }
     }
 
-    const savedName = localStorage.getItem(`foryou_visitor_name_${randomId}`) || '';
-    const savedEmail = localStorage.getItem(`foryou_visitor_email_${randomId}`) || '';
-
-    // Determine starting step per device: new device starts at Step 1 always
-    const localStep = parseInt(localStorage.getItem(stepKey) || '1', 10);
-    const startingStep = isNewDevice ? 1 : Math.min(Math.max(localStep, 1), 11);
-
-    const isResumed = startingStep > 1;
+    // ALWAYS start at Step 1 whenever opening the link afresh
+    localStorage.setItem(stepKey, '1');
 
     set({
       pageData,
-      currentStep: startingStep,
+      currentStep: 1,
       sessionId: savedSessionId,
       visitorName: savedName,
       visitorEmail: savedEmail,
-      isResumed,
-      showWelcomeBack: isResumed
+      isResumed: false,
+      showWelcomeBack: false
     });
   },
 
@@ -61,6 +69,7 @@ export const useFriendStore = create((set, get) => ({
     if (pageData?.randomId) {
       localStorage.setItem(`foryou_visitor_name_${pageData.randomId}`, name);
       localStorage.setItem(`foryou_visitor_email_${pageData.randomId}`, email);
+      localStorage.setItem(`foryou_session_timestamp_${pageData.randomId}`, Date.now().toString());
     }
     set({ visitorName: name, visitorEmail: email });
   },
