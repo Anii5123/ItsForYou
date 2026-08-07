@@ -66,7 +66,7 @@ const startSession = async (req, res) => {
 const sendHeartbeat = async (req, res) => {
   try {
     const { randomId } = req.params;
-    const { sessionId, currentStep, durationSeconds, completed } = req.body;
+    const { sessionId, currentStep, durationSeconds, completed, visitorName, visitorEmail } = req.body;
 
     const page = await FriendPage.findOne({ randomId });
     if (!page) return res.status(404).json({ message: 'Page not found' });
@@ -75,7 +75,10 @@ const sendHeartbeat = async (req, res) => {
     if (session) {
       session.lastActivityAt = new Date();
       if (durationSeconds) session.totalTimeSeconds = durationSeconds;
+      if (currentStep) session.currentStep = currentStep;
       if (completed !== undefined) session.completed = completed;
+      if (visitorName) session.visitorName = visitorName;
+      if (visitorEmail) session.visitorEmail = visitorEmail;
       await session.save();
     }
 

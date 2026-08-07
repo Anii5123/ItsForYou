@@ -1,19 +1,23 @@
 import api from './client';
 
-export const startSession = async (randomId, sessionId) => {
+export const startSession = async (randomId, sessionId, visitorName, visitorEmail) => {
   const response = await api.post(`/f/${randomId}/session`, {
     sessionId,
+    visitorName,
+    visitorEmail,
     userAgent: navigator.userAgent
   });
   return response.data;
 };
 
-export const sendHeartbeat = async (randomId, sessionId, currentStep, durationSeconds, completed) => {
+export const sendHeartbeat = async (randomId, sessionId, currentStep, durationSeconds, completed, visitorName, visitorEmail) => {
   const response = await api.post(`/f/${randomId}/heartbeat`, {
     sessionId,
     currentStep,
     durationSeconds,
-    completed
+    completed,
+    visitorName,
+    visitorEmail
   });
   return response.data;
 };
@@ -28,8 +32,8 @@ export const logPageVisit = async (randomId, data) => {
   }
 };
 
-export const syncStepServer = async (randomId, currentStep) => {
-  const response = await api.post(`/f/${randomId}/step`, { currentStep });
+export const syncStepServer = async (randomId, sessionId, currentStep) => {
+  const response = await api.post(`/f/${randomId}/step`, { sessionId, currentStep });
   return response.data;
 };
 

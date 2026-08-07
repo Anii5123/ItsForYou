@@ -212,8 +212,9 @@ export const AnalyticsPage = () => {
                   <tr>
                     <th className="p-3">Device / Visitor</th>
                     <th className="p-3">Started At</th>
-                    <th className="p-3">Duration Spent</th>
-                    <th className="p-3">Step Progress</th>
+                    <th className="p-3">Total Time</th>
+                    <th className="p-3">Current Step</th>
+                    <th className="p-3">Per-Step Time Dwell</th>
                     <th className="p-3">Status</th>
                   </tr>
                 </thead>
@@ -222,6 +223,8 @@ export const AnalyticsPage = () => {
                     const mins = Math.floor((session.totalTimeSeconds || 0) / 60);
                     const secs = (session.totalTimeSeconds || 0) % 60;
                     const durationStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                    const stepNames = ['Welcome', 'Greeting', 'Prompt', 'Timeline', 'Gallery', 'Voice Note', 'Surprise', 'Poem', 'Feedback', 'Reflection', 'Finale'];
+                    const currentStepName = stepNames[(session.currentStep || 1) - 1] || 'Welcome';
 
                     return (
                       <tr key={idx} className="hover:bg-slate-900/50 transition-colors">
@@ -244,13 +247,34 @@ export const AnalyticsPage = () => {
                         <td className="p-3 text-slate-400 font-mono">
                           {new Date(session.startedAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                         </td>
-                        <td className="p-3 font-semibold text-rose-300 font-mono">
+                        <td className="p-3 font-bold text-rose-300 font-mono">
                           {durationStr}
                         </td>
                         <td className="p-3">
-                          <span className="px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 font-bold text-[11px]">
-                            Step {session.currentStep}/11
-                          </span>
+                          <div className="space-y-0.5">
+                            <span className="px-2.5 py-1 rounded-full bg-slate-800 text-amber-300 font-bold text-[11px] inline-block">
+                              Step {session.currentStep}/11
+                            </span>
+                            <p className="text-[10px] text-slate-400 font-medium">{currentStepName}</p>
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          {session.stepBreakdown && session.stepBreakdown.length > 0 ? (
+                            <div className="flex flex-wrap gap-1 max-w-[220px]">
+                              {session.stepBreakdown.map((sv, sidx) => {
+                                const smins = Math.floor((sv.durationSeconds || 0) / 60);
+                                const ssecs = (sv.durationSeconds || 0) % 60;
+                                const sTime = smins > 0 ? `${smins}m${ssecs}s` : `${ssecs}s`;
+                                return (
+                                  <span key={sidx} className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-[9px] text-slate-300 font-mono">
+                                    {sv.pageKey}: <strong className="text-rose-400">{sTime}</strong>
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-slate-500 italic">No step dwell log</span>
+                          )}
                         </td>
                         <td className="p-3">
                           {session.completed ? (
@@ -258,8 +282,8 @@ export const AnalyticsPage = () => {
                               Completed 🎉
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px]">
-                              In Progress
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px]">
+                              In Progress (Step {session.currentStep})
                             </span>
                           )}
                         </td>

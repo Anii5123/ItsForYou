@@ -69,10 +69,10 @@ export const FriendJourneyPage = () => {
           bgAudioRef.current.loop = true;
         }
 
-        // Telemetry: Start Session
+        // Telemetry: Start Session with Visitor Details
         if (!isPreview) {
-          const currentSessId = useFriendStore.getState().sessionId;
-          await startSession(randomId, currentSessId);
+          const state = useFriendStore.getState();
+          await startSession(randomId, state.sessionId, state.visitorName, state.visitorEmail);
         }
       } catch (err) {
         setError(true);
@@ -94,7 +94,8 @@ export const FriendJourneyPage = () => {
 
     const interval = setInterval(() => {
       const elapsedSeconds = Math.round((Date.now() - sessionStartTime.current) / 1000);
-      sendHeartbeat(randomId, sessionId, currentStep, elapsedSeconds, currentStep === 11);
+      const { visitorName, visitorEmail } = useFriendStore.getState();
+      sendHeartbeat(randomId, sessionId, currentStep, elapsedSeconds, currentStep === 11, visitorName, visitorEmail);
     }, 10000);
 
     return () => clearInterval(interval);
@@ -119,7 +120,7 @@ export const FriendJourneyPage = () => {
     stepStartTime.current = Date.now();
 
     // Sync server-authoritative current step
-    syncStepServer(randomId, currentStep);
+    syncStepServer(randomId, sessionId, currentStep);
 
     // If reached ending step (11), submit stored feedback/reflections automatically
     if (currentStep === 11) {
