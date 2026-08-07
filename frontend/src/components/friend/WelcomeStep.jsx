@@ -194,7 +194,7 @@ export const WelcomeStep = ({ pageData, onNext, onPlayAudio }) => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Rahul Sharma"
+                    placeholder="e.g. Ani patil"
                     className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-rose-500 text-white text-xs outline-none transition-colors"
                   />
                 </div>
@@ -208,7 +208,7 @@ export const WelcomeStep = ({ pageData, onNext, onPlayAudio }) => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. rahul@gmail.com"
+                    placeholder="e.g. anipatil@gmail.com"
                     className="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-rose-500 text-white text-xs outline-none transition-colors"
                   />
                 </div>
