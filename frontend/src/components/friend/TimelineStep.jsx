@@ -45,10 +45,10 @@ export const TimelineStep = ({ pageData, onNext }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] space-y-6 px-4">
+    <div className="flex flex-col items-center justify-center min-h-[75vh] space-y-6 px-3 sm:px-4">
       {/* Header */}
       <div className="text-center space-y-1">
-        <span className="text-xs uppercase font-bold tracking-widest text-rose-300 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 inline-block">
+        <span className="text-xs uppercase font-bold tracking-widest text-rose-300 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 inline-block shadow-sm">
           Memory {currentIndex + 1} of {events.length}
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold font-display text-white flex items-center justify-center gap-2 pt-1">
@@ -57,7 +57,7 @@ export const TimelineStep = ({ pageData, onNext }) => {
       </div>
 
       {/* Memory Card */}
-      <div className="w-full max-w-xl min-h-[400px] flex flex-col justify-between p-6 sm:p-8 rounded-3xl glass-panel border border-rose-500/20 shadow-2xl relative overflow-hidden group hover:border-rose-500/40 transition-colors">
+      <div className="w-full max-w-xl min-h-[420px] flex flex-col justify-between p-5 sm:p-8 rounded-3xl glass-panel border border-rose-500/20 shadow-2xl relative overflow-hidden group hover:border-rose-500/40 transition-colors">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -68,7 +68,7 @@ export const TimelineStep = ({ pageData, onNext }) => {
             className="space-y-4"
           >
             {currentEvent.imageUrl && (
-              <div className="h-48 sm:h-60 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative group/img">
+              <div className="h-44 sm:h-60 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 relative group/img">
                 <img
                   src={currentEvent.imageUrl}
                   alt={currentEvent.title}
@@ -78,10 +78,10 @@ export const TimelineStep = ({ pageData, onNext }) => {
             )}
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <h3 className="text-xl sm:text-2xl font-bold font-display text-white">{currentEvent.title}</h3>
                 {currentEvent.date && (
-                  <span className="text-xs px-3 py-1 rounded-full bg-slate-800 text-rose-300 border border-slate-700 font-mono">
+                  <span className="text-xs px-3 py-1 rounded-full bg-slate-800 text-rose-300 border border-slate-700 font-mono whitespace-nowrap">
                     {currentEvent.date}
                   </span>
                 )}
@@ -93,40 +93,48 @@ export const TimelineStep = ({ pageData, onNext }) => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Card Controls & Progress Indicators */}
-        <div className="pt-6 border-t border-slate-800/80 flex items-center justify-between gap-4">
-          <button
-            onClick={handlePrevMemory}
-            disabled={currentIndex === 0}
-            className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 transition-all flex items-center gap-1 text-xs font-semibold"
-          >
-            <ChevronLeft className="w-4 h-4" /> Previous
-          </button>
-
+        {/* Card Controls & Centered Next Button */}
+        <div className="pt-6 border-t border-slate-800/80 space-y-4">
           {/* Progress Dots */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-1.5 overflow-x-auto py-1 max-w-full">
             {events.map((_, i) => (
-              <motion.span
+              <button
                 key={i}
-                animate={{ scale: i === currentIndex ? 1.2 : 1 }}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
+                onClick={() => setCurrentIndex(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${
                   i === currentIndex
-                    ? 'w-7 bg-rose-500 shadow-md shadow-rose-500/50'
+                    ? 'w-6 bg-rose-500 shadow-md shadow-rose-500/50'
                     : i < currentIndex
-                    ? 'w-2.5 bg-rose-500/40'
-                    : 'w-2.5 bg-slate-800'
+                    ? 'w-2 bg-rose-500/50'
+                    : 'w-2 bg-slate-800'
                 }`}
               />
             ))}
           </div>
 
-          <button
-            onClick={handleNextMemory}
-            className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition-all flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-rose-600/30 transform hover:-translate-y-0.5"
-          >
-            <span>{currentIndex === events.length - 1 ? 'Next Chapter' : 'Next Memory'}</span>
-            {currentIndex === events.length - 1 ? <ArrowRight className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </button>
+          {/* Action Buttons Area: Centered Primary Next Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {currentIndex > 0 && (
+              <button
+                onClick={handlePrevMemory}
+                className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all flex items-center justify-center gap-1.5 text-xs font-semibold"
+              >
+                <ChevronLeft className="w-4 h-4" /> Previous Memory
+              </button>
+            )}
+
+            <button
+              onClick={handleNextMemory}
+              className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-sm shadow-xl shadow-rose-600/40 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span>{currentIndex === events.length - 1 ? 'Next Chapter 🚀' : 'Next Memory'}</span>
+              {currentIndex === events.length - 1 ? (
+                <ArrowRight className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

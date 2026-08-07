@@ -136,38 +136,48 @@ export const GalleryStep = ({ pageData, onNext }) => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Controls & Progress Dots */}
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-4">
-            <button
-              onClick={handlePrevPhoto}
-              disabled={currentIndex === 0}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 transition-all flex items-center gap-1 text-xs font-semibold"
-            >
-              <ChevronLeft className="w-4 h-4" /> Previous
-            </button>
-
+          {/* Controls & Centered Next Button */}
+          <div className="pt-5 border-t border-slate-800 space-y-4">
             {/* Progress Indicators */}
-            <div className="flex items-center gap-1.5 overflow-x-auto max-w-[160px] py-1">
+            <div className="flex items-center justify-center gap-1.5 overflow-x-auto max-w-full py-1">
               {images.map((_, i) => (
-                <span
+                <button
                   key={i}
                   onClick={() => setCurrentIndex(i)}
-                  className={`h-2.5 rounded-full cursor-pointer transition-all duration-300 ${
+                  className={`h-2 rounded-full transition-all duration-300 ${
                     i === currentIndex
                       ? 'w-6 bg-rose-500 shadow-md shadow-rose-500/50'
-                      : 'w-2 bg-slate-700 hover:bg-rose-400'
+                      : i < currentIndex
+                      ? 'w-2 bg-rose-500/50'
+                      : 'w-2 bg-slate-800'
                   }`}
                 />
               ))}
             </div>
 
-            <button
-              onClick={handleNextPhoto}
-              className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition-all flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-rose-600/30 transform hover:-translate-y-0.5"
-            >
-              <span>{currentIndex === images.length - 1 ? 'Next Chapter' : 'Next Photo'}</span>
-              {currentIndex === images.length - 1 ? <ArrowRight className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-            </button>
+            {/* Action Buttons: Centered Primary Next Button */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              {currentIndex > 0 && (
+                <button
+                  onClick={handlePrevPhoto}
+                  className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all flex items-center justify-center gap-1.5 text-xs font-semibold"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous Photo
+                </button>
+              )}
+
+              <button
+                onClick={handleNextPhoto}
+                className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600 hover:from-rose-500 hover:to-rose-400 text-white font-bold text-sm shadow-xl shadow-rose-600/40 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <span>{currentIndex === images.length - 1 ? 'Next Chapter 🚀' : 'Next Photo'}</span>
+                {currentIndex === images.length - 1 ? (
+                  <ArrowRight className="w-4 h-4" />
+                ) : (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       ) : (
